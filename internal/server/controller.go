@@ -8,9 +8,9 @@ import (
 func GetBoardsController(ctx *gin.Context) {
 	client := ctx.MustGet("trelloClient").(*trello.TrelloClient)
 
-	name := ctx.Query("name")
+	id := ctx.Query("id")
 
-	boards, err := client.GetBoardsHandler(name)
+	boards, err := client.GetBoardHandler(id)
 
 	if err != nil {
 		ctx.JSON(500, gin.H{"error": "Failed to fetch boards: "})
@@ -30,11 +30,15 @@ func CreateBoardController(ctx *gin.Context) {
 		return
 	}
 
-	client.CreateBoardHandler(&payload)
+	newBoard, err := client.CreateBoardHandler(&payload)
+
+	if err != nil {
+		ctx.JSON(400, gin.H{"error": "Failed to create board"})
+	}
 
 	ctx.JSON(201, gin.H{
 		"message": "Board created successfully",
-		"data":    payload,
+		"data":    newBoard,
 	})
 }
 
