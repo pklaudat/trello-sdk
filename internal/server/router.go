@@ -4,7 +4,10 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/pklaudat/trello-sdk/docs"
 	"github.com/pklaudat/trello-sdk/internal/trello"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func Middleware(trelloClient *trello.TrelloClient) gin.HandlerFunc {
@@ -17,6 +20,13 @@ func Middleware(trelloClient *trello.TrelloClient) gin.HandlerFunc {
 
 func InitializeRoutes(key, token, host string) {
 	basePath := "/api/v1"
+
+	docs.SwaggerInfo.Title = "Trello GO API"
+	docs.SwaggerInfo.Description = "Trello GO Rest API"
+	docs.SwaggerInfo.Version = "1.0.0"
+	docs.SwaggerInfo.BasePath = basePath
+	docs.SwaggerInfo.Schemes = []string{"http", "https"}
+
 	router := gin.Default()
 
 	trelloClient := trello.NewTrelloClient(key, token, host)
@@ -25,7 +35,8 @@ func InitializeRoutes(key, token, host string) {
 
 	v1 := router.Group(basePath)
 	{
-		v1.GET("/boards", GetBoardsController)
+
+		v1.GET("/boards:id", GetBoardsController)
 		v1.POST("/boards", CreateBoardController)
 		v1.PUT("/boards/:id", UpdateBoardController)
 		v1.DELETE("/boards/:id", DeleteBoardController)
@@ -35,6 +46,8 @@ func InitializeRoutes(key, token, host string) {
 		v1.DELETE("/cards/:id", DeleteCardController)
 
 	}
+
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	port := os.Getenv("PORT")
 

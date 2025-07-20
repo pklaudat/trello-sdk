@@ -1,0 +1,30 @@
+info:
+  contact: {}
+paths:
+  /api/v1/boards:
+    get:
+      consumes:
+      - application/json
+      description: Fetch board details using the id
+      parameters:
+      - description: boards search by id
+        in: query
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Get board details
+      tags:
+      - boards
+    post:
+      consumes:
+      - application/json
+      description: Create new trello board
+      produces:
+      - application/json
+      responses: {}
+      summary: Create trello board
+      tags:
+      - boards
+swagger: "2.0"
